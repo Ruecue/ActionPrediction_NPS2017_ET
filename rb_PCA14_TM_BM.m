@@ -8,7 +8,7 @@ clear all
 close all
 clc
 direc = cd;
-out = [fdirec,'\Output\'];
+out = [direc,'\Output\'];
 
 datatotal = ImportDataFile([direc,'Data_12Feb2016.xlsx']); %Zet tussen de (' ') de directory en filename van xlsx file met de data. Deze wordt dan in de cellmatrix "data" geladen.
 timing  = ImportTimingFile([direc,'Timing_BM_v6.xlsx']);
