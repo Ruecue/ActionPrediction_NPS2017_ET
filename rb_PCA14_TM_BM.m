@@ -10,8 +10,8 @@ clc
 direc = cd;
 out = [direc,'\Output\'];
 
-datatotal = ImportDataFile([direc,'Data_12Feb2016.xlsx']); %Zet tussen de (' ') de directory en filename van xlsx file met de data. Deze wordt dan in de cellmatrix "data" geladen.
-timing  = ImportTimingFile([direc,'Timing_BM_v6.xlsx']);
+datatotal = ImportDataFile([direc,filesep, 'Data_12Feb2016.xlsx']); %Zet tussen de (' ') de directory en filename van xlsx file met de data. Deze wordt dan in de cellmatrix "data" geladen.
+timing  = ImportTimingFile([direc,filesep, 'Timing_BM_v6.xlsx']);
 
 rb_PCA14_TM_BM_LookingTimes_Percentages(direc, datatotal, timing, out)
 
@@ -21,8 +21,8 @@ close all
 clc
 cd(direc)
 
-datatotal = ImportDataFile([direc,'Data_12Feb2016.xlsx']); %Zet tussen de (' ') de directory en filename van xlsx file met de data. Deze wordt dan in de cellmatrix "data" geladen.
-timing  = ImportTimingFile([direc,'Timing_BM_v6.xlsx']);
+datatotal = ImportDataFile([direc,filesep,'Data_12Feb2016.xlsx']); %Zet tussen de (' ') de directory en filename van xlsx file met de data. Deze wordt dan in de cellmatrix "data" geladen.
+timing  = ImportTimingFile([direc,filesep,'Timing_BM_v6.xlsx']);
 
 rb_PCA14_TM_BM_CountRatio(direc, datatotal, timing, out)
 
@@ -32,8 +32,8 @@ close all
 clc
 cd(direc)
 
-datatotal = ImportDataFile([direc,'Data_12Feb2016.xlsx']); %Zet tussen de (' ') de directory en filename van xlsx file met de data. Deze wordt dan in de cellmatrix "data" geladen.
-timing  = ImportTimingFile([direc,'Timing_BM_v6.xlsx']);
+datatotal = ImportDataFile([direc,filesep,'Data_12Feb2016.xlsx']); %Zet tussen de (' ') de directory en filename van xlsx file met de data. Deze wordt dan in de cellmatrix "data" geladen.
+timing  = ImportTimingFile([direc,filesep,'Timing_BM_v6.xlsx']);
 
 rb_PCA14_TM_BM_OnsetPrediction(direc, datatotal, timing, out)
 
@@ -86,7 +86,7 @@ load([out, 'PredLook\PredictiveLook'],'PredictiveLook_AllSubs');
 
 %Store in one variable: Only Included Participants
 SPSS.PredLook.Table         = Table_PredictiveLook_AllSubs(Include,:);
-SPSS.PredLook.Mouth       = Mouth_PredictiveLook_AllSubs(Include,:);
-SPSS.PredLook.Combined       = PredictiveLook_AllSubs(Include,:);
+SPSS.PredLook.Mouth         = Mouth_PredictiveLook_AllSubs(Include,:);
+SPSS.PredLook.Combined      = PredictiveLook_AllSubs(Include,:);
 
 clearvars -except SPSS 

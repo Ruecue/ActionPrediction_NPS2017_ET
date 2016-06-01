@@ -7,9 +7,10 @@ cd(direc) %cd brengt ja naar een bepaalde directory, zet de directory met je scr
 subjtotal=size(unique(datatotal(:,2)),1)-1; %-1 because one is the heading "subject"
 AOI={'AOI1','AOI2','AOI3'};
 %%
+x_all=1; %this index is used to store the information of all videos and subjects in the variable OutDataPerVideo
 for subj=1:subjtotal
     clear LookingTime
-    clearvars -except subj AOI subjtotal direc datatotal timing out LookingTime_AllSubs Table_LookingTime_AllSubs Mouth_LookingTime_AllSubs  Mouth_LookingTime_TrialNumber  Table_LookingTime_TrialNumber  LookingTime_TrialNumber
+    clearvars -except OutDataPerVideo x_all subj AOI subjtotal direc datatotal timing out LookingTime_AllSubs Table_LookingTime_AllSubs Mouth_LookingTime_AllSubs  Mouth_LookingTime_TrialNumber  Table_LookingTime_TrialNumber  LookingTime_TrialNumber
     
     %Create the subject name that we will look for in the data file
     if subj<10, subjname=['pil0',num2str(subj)];  %plak het nummer dat 'i' is op dit moment, vast aan de 'string' 'Pil0'
@@ -23,6 +24,16 @@ for subj=1:subjtotal
     %Look for the number of trials from the subject
     trialtotal=unique(data(:,1));
     
+    %find the stimulus number for that trial
+    
+    stimtotal=unique(data(:,4));
+    for i=1:size(stimtotal,1)
+        temp=stimtotal{i};
+        stimtotaltemp(i,1)=str2num(temp(1:end-5));
+    end
+    stimtotal=stimtotaltemp;
+    clear temp stimtotaltemp
+    
     %reset the table and mouth trials
     table_trl=1;
     mouth_trl=1;
@@ -31,7 +42,10 @@ for subj=1:subjtotal
     
     for trl=1:length(trialtotal)
         trialnumber=trialtotal(trl);
-        
+        %get the video of that trial
+        i_begtrl=min(find((strcmp(trialnumber,data(:,1)))));
+        vidnum=str2num(data{i_begtrl,4}(1:end-5));
+       
         %This tells us whether a trial ia a mouth or a table trial
         table=0;
         mouth=0;
@@ -54,6 +68,13 @@ for subj=1:subjtotal
                 if strcmpi(data(rij,2),subjname) && strcmpi(data(rij,1),trialnumber) && (data{rij,8}==aoi)==1 
                     stimulus=data{rij,4};
                     stimulus=str2num(stimulus(1:end-5)); %Make a number out of the string which can then be compared to the timing file
+                    
+                    %sanity check (above I determined vidnum and this
+                    %should be the same as stimulus here, so I am
+                    %doublechecking this to make sure my code is right.
+                    if ~isequal(stimulus, vidnum)
+                        error('stimulus and vidnum is not the same, check the loop and data file')
+                    end
                     
                     if stimulus>=200
                         table=1; %table trials
@@ -123,17 +144,30 @@ for subj=1:subjtotal
                 LookingTime.Trials(trl,aoi)=NaN;
                 LookingTime.Predictive(trl,aoi)=NaN;
                 LookingTime.Reactive(trl,aoi)=NaN;
+                LookingTime.VidNum(trl,aoi)=vidnum; %this stores which video has been seen so that we can later group videos together
             elseif sum(predictive_tempdur)>0 %if we have at least one predictive fixation this trial is counted as predictive and we sum up the predictive looking time
                 LookingTime.Trials(trl,aoi)=1; %predictive
                 LookingTime.Predictive(trl,aoi)=(sum(predictive_tempdur))/(middlepoint-beginpoint); %Percentage of Looking to AOI during predictive time window  
                 LookingTime.Reactive(trl,aoi)=NaN; %reactive doesnt count here
+                LookingTime.VidNum(trl,aoi)=vidnum; %this stores which video has been seen so that we can later group videos together
             else %if there is no predictive fixation, the trial is reactive and we sum up the reactive looking time
                 LookingTime.Trials(trl,aoi)=0; %reactive
                 LookingTime.Predictive(trl,aoi)=NaN; %Predictive is 0
                 LookingTime.Reactive(trl,aoi)=(sum(reactive_tempdur))/(endpoint-middlepoint); %Percentage of Looking to AOI during reactive time window
+                LookingTime.VidNum(trl,aoi)=vidnum; %this stores which video has been seen so that we can later group videos together
              end
             % Store the raw data
             LookingTime.ParticipantData.(AOI{aoi}){trl,1}=ParticipantData;
+                       
+            %Write this off into large datafile
+            OutDataPerVideo(x_all,1)=subj;
+            OutDataPerVideo(x_all,2)=vidnum;
+            OutDataPerVideo(x_all,3)=aoi;
+            OutDataPerVideo(x_all,4)=LookingTime.Predictive(trl,aoi);
+            OutDataPerVideo(x_all,5)=LookingTime.Reactive(trl,aoi);
+            
+            x_all=x_all+1;
+            
         end
         
         if table==1
@@ -147,6 +181,8 @@ for subj=1:subjtotal
             Mouth_LookingTime.Reactive(mouth_trl,:)=LookingTime.Reactive(trl,:);
             mouth_trl= mouth_trl+1;
         end
+     
+        
     end
     
 %     %After we have classifed all trials as either predictive or reactive we
@@ -246,3 +282,5 @@ save([out, 'Looking\Table_LookingTime_Percentage'],'Table_LookingTime_TrialNumbe
 
 save([out, 'Looking\Mouth_LookingTime_Percentage'],'Mouth_LookingTime_AllSubs')
 save([out, 'Looking\Mouth_LookingTime_Percentage'],'Mouth_LookingTime_TrialNumber', '-append')
+
+save([out, 'Looking\OutDataPerVideo'], 'OutDataPerVideo')
