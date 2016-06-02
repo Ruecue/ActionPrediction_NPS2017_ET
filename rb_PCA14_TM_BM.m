@@ -37,6 +37,11 @@ timing  = ImportTimingFile([direc,filesep,'Timing_BM_v6.xlsx']);
 
 rb_PCA14_TM_BM_OnsetPrediction(direc, datatotal, timing, out)
 
+%% In order to extract plots of the measures for each of the different videos, use the following script:
+Include=[1,2,3,6,9,10,12,15,18:31];
+rb_PCA14_TM_BM_PerVideo(direc, out, Include)
+
+
 
 %% Transfer to SPSS
 clearvars -except direc out

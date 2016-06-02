@@ -7,11 +7,13 @@ subjtotal=size(unique(datatotal(:,2)),1)-1; %-1 because one is the heading "subj
 
 AOI={'AOI1','AOI2','AOI3'};
 %%
+x_all=1; %this index is used to store the information of all videos and subjects in the variable C_OutDataPerVideo
+
 for subj=1:subjtotal
     if subj<10, subjname=['Pil0',num2str(subj)];  %plak het nummer dat 'i' is op dit moment, vast aan de 'string' 'Pil0'
     else subjname=['Pil',num2str(subj)];
     end
-    clearvars -except subj subjname AOI subjtotal direc datatotal timing out PredictiveLook_AllSubs PredictiveLook_TrialNumber Table_PredictiveLook_AllSubs Table_PredictiveLook_TrialNumber Mouth_PredictiveLook_AllSubs Mouth_PredictiveLook_TrialNumber
+    clearvars -except PO_OutDataPerVideo x_all subj subjname AOI subjtotal direc datatotal timing out PredictiveLook_AllSubs PredictiveLook_TrialNumber Table_PredictiveLook_AllSubs Table_PredictiveLook_TrialNumber Mouth_PredictiveLook_AllSubs Mouth_PredictiveLook_TrialNumber
     
     %Find data of that participant
     index=find(strcmpi(datatotal(:,2),subjname));
@@ -24,6 +26,11 @@ for subj=1:subjtotal
         trialnumber=trialtotal(trl);
         table=0;
         mouth=0;
+        
+        %get the video of that trial
+        i_begtrl=min(find((strcmp(trialnumber,data(:,1)))));
+        vidnum=str2num(data{i_begtrl,4}(1:end-5));
+        
         for aoi=1:3; %Action Step 1,2,3
             clear stimulus
             ParticipantData={};
@@ -80,8 +87,22 @@ for subj=1:subjtotal
             else
                 PredictiveLook.Predictive(trl,aoi)=NaN;
             end
+            
+            %Store the Video Number to later be able to analyse videos
+            %separately:
+             PredictiveLook.VidNum(trl,aoi)=vidnum; %this stores which video has been seen so that we can later group videos together
+            
             % Store the raw data
             PredictiveLook.ParticipantData.(AOI{aoi}){trl,1}=ParticipantData;
+            
+                 %Write this off into large datafile
+            PO_OutDataPerVideo(x_all,1)=subj;
+            PO_OutDataPerVideo(x_all,2)=vidnum;
+            PO_OutDataPerVideo(x_all,3)=aoi;
+            PO_OutDataPerVideo(x_all,4)=PredictiveLook.Predictive(trl,aoi);
+           
+            x_all=x_all+1;
+            
         end
         
         if table==1
@@ -121,4 +142,6 @@ save([out '\PredLook\Table_PredictiveLook'],'Table_PredictiveLook_TrialNumber', 
 
 save([out '\PredLook\Mouth_PredictiveLook'],'Mouth_PredictiveLook_AllSubs')
 save([out '\PredLook\Mouth_PredictiveLook'],'Mouth_PredictiveLook_TrialNumber', '-append')
+
+save([out, '\PredLook\PO_OutDataPerVideo'], 'PO_OutDataPerVideo')
 

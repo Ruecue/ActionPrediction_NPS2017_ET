@@ -7,10 +7,10 @@ cd(direc) %cd brengt ja naar een bepaalde directory, zet de directory met je scr
 subjtotal=size(unique(datatotal(:,2)),1)-1; %-1 because one is the heading "subject"
 AOI={'AOI1','AOI2','AOI3'};
 %%
-x_all=1; %this index is used to store the information of all videos and subjects in the variable OutDataPerVideo
+x_all=1; %this index is used to store the information of all videos and subjects in the variable LT_OutDataPerVideo
 for subj=1:subjtotal
     clear LookingTime
-    clearvars -except OutDataPerVideo x_all subj AOI subjtotal direc datatotal timing out LookingTime_AllSubs Table_LookingTime_AllSubs Mouth_LookingTime_AllSubs  Mouth_LookingTime_TrialNumber  Table_LookingTime_TrialNumber  LookingTime_TrialNumber
+    clearvars -except LT_OutDataPerVideo x_all subj AOI subjtotal direc datatotal timing out LookingTime_AllSubs Table_LookingTime_AllSubs Mouth_LookingTime_AllSubs  Mouth_LookingTime_TrialNumber  Table_LookingTime_TrialNumber  LookingTime_TrialNumber
     
     %Create the subject name that we will look for in the data file
     if subj<10, subjname=['pil0',num2str(subj)];  %plak het nummer dat 'i' is op dit moment, vast aan de 'string' 'Pil0'
@@ -160,11 +160,11 @@ for subj=1:subjtotal
             LookingTime.ParticipantData.(AOI{aoi}){trl,1}=ParticipantData;
                        
             %Write this off into large datafile
-            OutDataPerVideo(x_all,1)=subj;
-            OutDataPerVideo(x_all,2)=vidnum;
-            OutDataPerVideo(x_all,3)=aoi;
-            OutDataPerVideo(x_all,4)=LookingTime.Predictive(trl,aoi);
-            OutDataPerVideo(x_all,5)=LookingTime.Reactive(trl,aoi);
+            LT_OutDataPerVideo(x_all,1)=subj;
+            LT_OutDataPerVideo(x_all,2)=vidnum;
+            LT_OutDataPerVideo(x_all,3)=aoi;
+            LT_OutDataPerVideo(x_all,4)=LookingTime.Predictive(trl,aoi);
+            LT_OutDataPerVideo(x_all,5)=LookingTime.Reactive(trl,aoi);
             
             x_all=x_all+1;
             
@@ -283,4 +283,4 @@ save([out, 'Looking\Table_LookingTime_Percentage'],'Table_LookingTime_TrialNumbe
 save([out, 'Looking\Mouth_LookingTime_Percentage'],'Mouth_LookingTime_AllSubs')
 save([out, 'Looking\Mouth_LookingTime_Percentage'],'Mouth_LookingTime_TrialNumber', '-append')
 
-save([out, 'Looking\OutDataPerVideo'], 'OutDataPerVideo')
+save([out, 'Looking\LT_OutDataPerVideo'], 'LT_OutDataPerVideo')
