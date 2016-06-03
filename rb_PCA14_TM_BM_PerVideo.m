@@ -84,11 +84,13 @@ while rc<=length(Set)
         if isequal(Set(rc,1),Set(rc+1,1)) && isequal(Set(rc,2),Set(rc+1,2)) && isequal(Set(rc,3),Set(rc+1,3)) %if we have two of the same Subject, Video and AOI, we need to average
             %check that the next row is not also the same (there should be max
             %2 trials per participant
-            if isequal(Set(rc+1,1),Set(rc+2,1)) && isequal(Set(rc+1,2),Set(rc+2,2)) && isequal(Set(rc+1,3),Set(rc+2,3))
-                disp(Set(rc,1))
-                disp(Set(rc,2))
-                disp(Set(rc,3))
-                error('it seems that there are more than two trials for this participant and AOI')
+            if rc<length(Set)-1 %only check this if we are not already at the end ;)
+                if isequal(Set(rc+1,1),Set(rc+2,1)) && isequal(Set(rc+1,2),Set(rc+2,2)) && isequal(Set(rc+1,3),Set(rc+2,3))
+                    disp(Set(rc,1))
+                    disp(Set(rc,2))
+                    disp(Set(rc,3))
+                    error('it seems that there are more than two trials for this participant and AOI')
+                end
             end
             
             %Create Average
@@ -281,7 +283,19 @@ for vid=14:28 %200ers
      pl=pl+1;
 end
 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %%%%%%%%%%%%%%%%%%%%% Predictive Look Onset
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 clearvars -except out inc 
 %% load in the information for all participants and videos
@@ -324,11 +338,13 @@ while rc<=length(SetPO)
         if isequal(SetPO(rc,1),SetPO(rc+1,1)) && isequal(SetPO(rc,2),SetPO(rc+1,2)) && isequal(SetPO(rc,3),SetPO(rc+1,3)) %if we have two of the same Subject, Video and AOI, we need to average
             %check that the next row is not also the same (there should be max
             %2 trials per participant
-            if isequal(SetPO(rc+1,1),SetPO(rc+2,1)) && isequal(SetPO(rc+1,2),SetPO(rc+2,2)) && isequal(SetPO(rc+1,3),SetPO(rc+2,3))
-                disp(SetPO(rc,1))
-                disp(SetPO(rc,2))
-                disp(SetPO(rc,3))
-                error('it seems that there are more than two trials for this participant and AOI')
+            if rc<length(SetPO)-1 %only check this if we are not already at the end ;)
+                if isequal(SetPO(rc+1,1),SetPO(rc+2,1)) && isequal(SetPO(rc+1,2),SetPO(rc+2,2)) && isequal(SetPO(rc+1,3),SetPO(rc+2,3))
+                    disp(SetPO(rc,1))
+                    disp(SetPO(rc,2))
+                    disp(SetPO(rc,3))
+                    error('it seems that there are more than two trials for this participant and AOI')
+                end
             end
             
             %Create Average
@@ -383,7 +399,7 @@ testjump=diff(Set_AvgPO(:,3));
 ok=[0,1,-2];
 
 if max(~ismember(testjump,ok))>0 %this means there is a number in there that we dont allow.
-    warning('the order of AOIs is not correct (1,2,3), there might be videos for which no data is present, please check')
+    warning('PO ANALYSIS: the order of AOIs is not correct (1,2,3), there might be videos for which no data is present, please check')
     %find the missing AOI-video combination:
     wrongjump=find(~ismember(testjump,ok)>0);
     priorAOI=Set_AvgPO(wrongjump,3);
@@ -391,7 +407,7 @@ if max(~ismember(testjump,ok))>0 %this means there is a number in there that we 
     followAOI=Set_AvgPO(wrongjump+1,3);
     followVid=Set_AvgPO(wrongjump+1,2);
     
-    warning('the following AOI seems to be missing for this video:')
+    warning('PO ANALYSIS: the following AOI seems to be missing for this video:')
     disp('priorAOI:')
     disp(priorAOI)
     disp('priorVid:')
@@ -413,7 +429,7 @@ if max(~ismember(testjump,ok))>0 %this means there is a number in there that we 
        %add this in: (using A = [A(1:k,:); b; A(k+1:end,:)]
        Set_AvgPO=[Set_AvgPO(1:wrongjump,:);Addin;Set_AvgPO(wrongjump+1:end,:)];
     else
-        error('The Video-AOI combi that is missing cannot be solved by the script, please check')
+        error('PO ANALYSIS: The Video-AOI combi that is missing cannot be solved by the script, please check')
     end
     warning('added in NaN ro the data for Video and AOI:')
     disp(AddVid)
@@ -487,6 +503,236 @@ for vid=14:28 %200ers
     title(SPSSOut_PO(vid,1))
      pl=pl+1;
 end
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%% Closest Fixation Onset (Middle-FixOnset) 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+clearvars -except out inc 
+%% load in the information for all participants and videos
+load([out, '\ClosFix\CF_OutDataPerVideo'], 'CF_OutDataPerVideo');
+SetCF=CF_OutDataPerVideo;
+clear CF_OutDataPerVideo
+
+%Remove invalid trials and replace NaN with 0 where needed
+%Also remove participants that I want to exclude
+j=1;
+del=[];
+for i=1:length(SetCF)
+    if isnan(SetCF(i,4)) || ~ismember(SetCF(i,1),inc)
+        del(j)=i;
+        j=j+1;
+    end
+end
+
+%delete the invalid trials
+if ~isempty(del)
+    SetCF(del,:)=[];
+end
+
+%% Next, we want to create an average per subject for each of the videos (for COunt and PPminPR)
+%to sort everything more easily, we create a dataset
+DSetCF=mat2dataset(SetCF);
+DSetCF.Properties.VarNames={'sub','video','AOI', 'CFDiff'};
+
+%Sorted according to subject, then video and then AOI so that we can
+%compute the average.
+DSetCF = sortrows(DSetCF,{'sub','video', 'AOI'});
+
+%Convert back to double
+SetCF=double(DSetCF);
+
+j=1;
+rc=1; %rc: the row you want to check (we want to skip one row if we averaged that one).
+while rc<=length(SetCF)
+    if rc<length(SetCF)
+        if isequal(SetCF(rc,1),SetCF(rc+1,1)) && isequal(SetCF(rc,2),SetCF(rc+1,2)) && isequal(SetCF(rc,3),SetCF(rc+1,3)) %if we have two of the same Subject, Video and AOI, we need to average
+            %check that the next row is not also the same (there should be max
+            %2 trials per participant
+            
+            %if we are before the last two trials we need to check the
+            %trial after that as well:
+            if rc<length(SetCF)-1
+                if isequal(SetCF(rc+1,1),SetCF(rc+2,1)) && isequal(SetCF(rc+1,2),SetCF(rc+2,2)) && isequal(SetCF(rc+1,3),SetCF(rc+2,3))
+                    disp(SetCF(rc,1))
+                    disp(SetCF(rc,2))
+                    disp(SetCF(rc,3))
+                    error('it seems that there are more than two trials for this participant and AOI')
+                end
+            end
+            
+            %Create Average
+            Set_AvgCF(j,1)=SetCF(rc,1); %Sub
+            Set_AvgCF(j,2)=SetCF(rc,2); %Trial
+            Set_AvgCF(j,3)=SetCF(rc,3); %AOI
+            %average the two values
+            Set_AvgCF(j,4)=mean([SetCF(rc,4),SetCF(rc+1,4)]); %Avg. Closest fixation difference
+           
+            rc=rc+2; %skip the next row
+            j=j+1;
+        else
+            %Use single value:
+            Set_AvgCF(j,1)=SetCF(rc,1); %Sub
+            Set_AvgCF(j,2)=SetCF(rc,2); %Trial
+            Set_AvgCF(j,3)=SetCF(rc,3); %AOI
+            %use this row only
+            Set_AvgCF(j,4)=SetCF(rc,4); %Closest Fixation difference
+            
+            rc=rc+1; %we need to check the next row.
+            j=j+1;
+        end
+    else %for the last row, we only need to write this into Set_Avg if this is a unique trial
+        if ~isequal(SetCF(rc,1),SetCF(rc-1,1)) || ~isequal(SetCF(rc,2),SetCF(rc-1,2)) || ~isequal(SetCF(rc,3),SetCF(rc-1,3)) %if this trial is different from the one before write this into the variable
+            %Use single value:
+            Set_AvgCF(j,1)=SetCF(rc,1); %Sub
+            Set_AvgCF(j,2)=SetCF(rc,2); %Trial
+            Set_AvgCF(j,3)=SetCF(rc,3); %AOI
+            %use this row only
+            Set_AvgCF(j,4)=SetCF(rc,4);%Closest Fixation difference
+        end
+        rc=rc+1;
+    end
+end
+
+%% Next, we want to average across participants per Video and AOI
+
+DSet_AvgCF=mat2dataset(Set_AvgCF);
+DSet_AvgCF.Properties.VarNames={'sub','video','AOI','CFDiff'};
+
+%Sorted according to subject, then video and then AOI so that we can
+%compute the average.
+DSet_AvgCF = sortrows(DSet_AvgCF,{'video','AOI'});
+
+%% Now I want to average over participants in these arrays
+Set_AvgCF=double(DSet_AvgCF);
+
+%Detect each jumps in the AOIs (from 1 to 2, 2 to 3, etc.)
+
+%check that there are only jumps of 0, +1 (1-2, 2-3) and -2 (3-1)
+testjump=diff(Set_AvgCF(:,3));
+ok=[0,1,-2];
+
+if max(~ismember(testjump,ok))>0 %this means there is a number in there that we dont allow.
+    warning('CF ANALYSIS: the order of AOIs is not correct (1,2,3), there might be videos for which no data is present, please check')
+    %find the missing AOI-video combination:
+    wrongjump=find(~ismember(testjump,ok)>0);
+    priorAOI=Set_AvgCF(wrongjump,3);
+    priorVid=Set_AvgCF(wrongjump,2);
+    followAOI=Set_AvgCF(wrongjump+1,3);
+    followVid=Set_AvgCF(wrongjump+1,2);
+    
+    warning('CF ANALYSIS:the following AOI seems to be missing for this video:')
+    disp('priorAOI:')
+    disp(priorAOI)
+    disp('priorVid:')
+    disp(priorVid)
+    disp('followAOI:')
+    disp(followAOI)
+    disp('followVid:')
+    disp(followVid)
+    
+    %If its a missing AOI from the same video, add that in (as this was the case
+    %for my data), if its not from the same video, give error
+    
+    if priorVid-followVid==0
+       AllAOI=[1,2,3];
+       AOIpresent=[priorAOI,followAOI];
+       AddVid=priorVid;
+       AddAOI=setdiff(AllAOI,AOIpresent);
+       Addin=[NaN,AddVid,AddAOI,NaN];
+       %add this in: (using A = [A(1:k,:); b; A(k+1:end,:)]
+       Set_AvgCF=[Set_AvgCF(1:wrongjump,:);Addin;Set_AvgCF(wrongjump+1:end,:)];
+    else
+        error('CF ANALYSIS:The Video-AOI combi that is missing cannot be solved by the script, please check')
+    end
+    warning('added in NaN ro the data for Video and AOI:')
+    disp(AddVid)
+    disp(AddAOI)
+    warning('press enter to proceed:')
+    input('')
+end
+
+jump = find(abs(diff(Set_AvgCF(:,3)))> 0);
+
+%check that these indeed belong to the same video.
+clear M_SetAvgCF
+s_in=1; %starting index for the average)
+j=1; %index for M_SetAvg
+for i=1:length(jump)
+    M_SetAvgCF(j,1)=mean(Set_AvgCF([s_in:jump(i)],2)); %Video
+    M_SetAvgCF(j,2)=mean(Set_AvgCF([s_in:jump(i)],3)); %AOI
+    M_SetAvgCF(j,3)=mean(Set_AvgCF([s_in:jump(i)],4)); %Value CF
+    s_in=jump(i)+1;
+    j=j+1;
+end
+
+%add last trial
+M_SetAvgCF(j,1)=mean(Set_AvgCF([s_in:end],2)); %Video
+M_SetAvgCF(j,2)=mean(Set_AvgCF([s_in:end],3)); %AOI
+M_SetAvgCF(j,3)=mean(Set_AvgCF([s_in:end],4)); %Value CF
+
+%rearrange per video (columns: AOIs)
+DS_M_SetAvgCF=mat2dataset(M_SetAvgCF);
+DS_M_SetAvgCF.Properties.VarNames={'video','AOI','CFDiff'};
+%sort according to AOI and then  video
+DS_M_SetAvgCF = sortrows(DS_M_SetAvgCF,{'AOI', 'video'});
+
+M_SetAvgCF=double(DS_M_SetAvgCF);
+
+%%Plot and export for the different variables:
+
+%Predictive OnsetLookingTime
+thirds=find(abs(diff((M_SetAvgCF(:,2))))>0);
+SPSSOut_CF(:,1)=M_SetAvgCF([1:thirds(1)],1); %Video Number
+SPSSOut_CF(:,2)=M_SetAvgCF([1:thirds(1)],3); %AOI1 CF
+SPSSOut_CF(:,3)=M_SetAvgCF([thirds(1)+1:thirds(2)],3);%AOI2 CF
+SPSSOut_CF(:,4)=M_SetAvgCF([thirds(2)+1:end],3); %AOI3 CF
+
+%Sanity check
+%Videos should be the same
+if ~isequal(SPSSOut_CF(:,1),M_SetAvgCF([thirds(1)+1:thirds(2)],1)) || ~isequal(SPSSOut_CF(:,1),M_SetAvgCF([thirds(2)+1:end],1))
+    error ('Distribution of videos in SPSSOut is not consistent between AOIs, please check CF')
+end
+
+if ~isequal(mean(M_SetAvgCF([thirds(1)+1:thirds(2)],2)),2) ||~isequal(mean(M_SetAvgCF([thirds(2)+1:end],2)),3)
+    error ('Distribution of AOIs in SPSSOut is not correct, please check (LT & C)')
+end
+
+%% Barplots per video
+%Predictive Onset
+for vid=1:13 %100ers
+    figure(5)
+    subplot(4,4,vid)
+    bar(SPSSOut_CF(vid,[2:end]),'y')
+    ylim([-1000,0])
+    title(SPSSOut_CF(vid,1))
+end
+
+pl=1;
+for vid=14:28 %200ers
+    figure(6)
+    subplot(4,4,pl)
+    bar(SPSSOut_CF(vid,[2:end]),'y')
+    ylim([-1000,0])
+    title(SPSSOut_CF(vid,1))
+     pl=pl+1;
+end
+
+
+
+
+
 
 
 

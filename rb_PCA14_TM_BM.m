@@ -37,9 +37,17 @@ timing  = ImportTimingFile([direc,filesep,'Timing_BM_v6.xlsx']);
 
 rb_PCA14_TM_BM_OnsetPrediction(direc, datatotal, timing, out)
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ADDED IN JUNE 2016 BEGIN
+
+%% Investigating differences in Closest Fixation to Hand entering AOI\
+rb_PCA14_TM_BM_ClosFix(direc, datatotal, timing, out)
+
+
 %% In order to extract plots of the measures for each of the different videos, use the following script:
 Include=[1,2,3,6,9,10,12,15,18:31];
 rb_PCA14_TM_BM_PerVideo(direc, out, Include)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ADDED IN JUNE 2016 END
 
 
 
