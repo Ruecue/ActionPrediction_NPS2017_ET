@@ -98,8 +98,8 @@ while rc<=length(Set)
             Set_Avg(j,2)=Set(rc,2); %Trial
             Set_Avg(j,3)=Set(rc,3); %AOI
             %average the two values
-            Set_Avg(j,4)=mean([Set(rc,6),Set(rc+1,6)]); %Looking %pred-%react
-            Set_Avg(j,5)=mean([Set(rc,7),Set(rc+1,7)]); %Count: the mean of the 0 and 1 will give us the count ratio
+            Set_Avg(j,4)=(Set(rc,6)+Set(rc+1,6))/2; %Looking %pred-%react
+            Set_Avg(j,5)=(Set(rc,6)+Set(rc+1,6))/2; %Count: the mean of the 0 and 1 will give us the count ratio
             
             rc=rc+2; %skip the next row
             j=j+1;
@@ -352,7 +352,7 @@ while rc<=length(SetPO)
             Set_AvgPO(j,2)=SetPO(rc,2); %Trial
             Set_AvgPO(j,3)=SetPO(rc,3); %AOI
             %average the two values
-            Set_AvgPO(j,4)=mean([SetPO(rc,4),SetPO(rc+1,4)]); %Avg. Predictive Look Onset
+            Set_AvgPO(j,4)=(SetPO(rc,4)+SetPO(rc+1,4))/2; %Avg. Predictive Look Onset
            
             rc=rc+2; %skip the next row
             j=j+1;
@@ -577,7 +577,7 @@ while rc<=length(SetCF)
             Set_AvgCF(j,2)=SetCF(rc,2); %Trial
             Set_AvgCF(j,3)=SetCF(rc,3); %AOI
             %average the two values
-            Set_AvgCF(j,4)=mean([SetCF(rc,4),SetCF(rc+1,4)]); %Avg. Closest fixation difference
+            Set_AvgCF(j,4)=(SetCF(rc,4)+SetCF(rc+1,4))/2; %Avg. Closest fixation difference
            
             rc=rc+2; %skip the next row
             j=j+1;
@@ -712,7 +712,7 @@ end
 %% Barplots per video
 %Predictive Onset
 for vid=1:13 %100ers
-    figure(5)
+    figure(7)
     subplot(4,4,vid)
     bar(SPSSOut_CF(vid,[2:end]),'y')
     ylim([-1000,0])
@@ -721,7 +721,7 @@ end
 
 pl=1;
 for vid=14:28 %200ers
-    figure(6)
+    figure(8)
     subplot(4,4,pl)
     bar(SPSSOut_CF(vid,[2:end]),'y')
     ylim([-1000,0])
