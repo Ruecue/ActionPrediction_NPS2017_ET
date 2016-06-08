@@ -1,12 +1,12 @@
-function rb_PCA14_TM_BM_PerVideo(direc, out, inc)
+function rb_PCA14_TM_BM_PerVideo(direc, out, inc, incstim)
 
 % direc: directory of the scripts
 % out: output directory
 % inc: Variable Include from the main script that indices which subjects to
 % include
 
-Include=[1,2,3,6,9,10,12,15,18:31];
-inc=Include;
+% Include=[1,2,3,6,9,10,12,15,18:31];
+% inc=Include;
 
 %%%%%%%%%%%%%%%%%%%%% LookingTime & Count Ratio
 
@@ -99,7 +99,7 @@ while rc<=length(Set)
             Set_Avg(j,3)=Set(rc,3); %AOI
             %average the two values
             Set_Avg(j,4)=(Set(rc,6)+Set(rc+1,6))/2; %Looking %pred-%react
-            Set_Avg(j,5)=(Set(rc,6)+Set(rc+1,6))/2; %Count: the mean of the 0 and 1 will give us the count ratio
+            Set_Avg(j,5)=(Set(rc,7)+Set(rc+1,7))/2; %Count: the mean of the 0 and 1 will give us the count ratio
             
             rc=rc+2; %skip the next row
             j=j+1;
@@ -246,7 +246,11 @@ end
 
 %% Barplots per video
 %Looking Time
-for vid=1:13 %100ers
+
+
+length(find(incstim<200))
+
+for vid=1:length(find(incstim<200)); %100ers
     figure(1)
     subplot(4,4,vid)
     bar(SPSSOut_LT(vid,[2:end]))
@@ -255,7 +259,7 @@ for vid=1:13 %100ers
 end
 
 pl=1;
-for vid=14:28 %200ers
+for vid=length(find(incstim<200))+1:length(incstim) %200ers
     figure(2)
     subplot(4,4,pl)
     bar(SPSSOut_LT(vid,[2:end]))
@@ -265,7 +269,7 @@ for vid=14:28 %200ers
 end
 
 %Count
-for vid=1:13 %100ers
+for vid=1:length(find(incstim<200)); %100ers
     figure(3)
     subplot(4,4,vid)
     bar(SPSSOut_C(vid,[2:end]),'g')
@@ -274,7 +278,7 @@ for vid=1:13 %100ers
 end
 
 pl=1;
-for vid=14:28 %200ers
+for vid=length(find(incstim<200))+1:length(incstim) %200ers
     figure(4)
     subplot(4,4,pl)
     bar(SPSSOut_C(vid,[2:end]),'g')
@@ -297,7 +301,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-clearvars -except out inc 
+clearvars -except out inc incstim
 %% load in the information for all participants and videos
 load([out, 'PredLook\PO_OutDataPerVideo'], 'PO_OutDataPerVideo');
 SetPO=PO_OutDataPerVideo;
@@ -486,7 +490,7 @@ end
 
 %% Barplots per video
 %Predictive Onset
-for vid=1:13 %100ers
+for vid=1:length(find(incstim<200)); %100ers
     figure(5)
     subplot(4,4,vid)
     bar(SPSSOut_PO(vid,[2:end]),'r')
@@ -495,7 +499,7 @@ for vid=1:13 %100ers
 end
 
 pl=1;
-for vid=14:28 %200ers
+for vid=length(find(incstim<200))+1:length(incstim) %200ers
     figure(6)
     subplot(4,4,pl)
     bar(SPSSOut_PO(vid,[2:end]),'r')
@@ -519,7 +523,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-clearvars -except out inc 
+clearvars -except out inc incstim
 %% load in the information for all participants and videos
 load([out, '\ClosFix\CF_OutDataPerVideo'], 'CF_OutDataPerVideo');
 SetCF=CF_OutDataPerVideo;
@@ -711,7 +715,7 @@ end
 
 %% Barplots per video
 %Predictive Onset
-for vid=1:13 %100ers
+for vid=1:length(find(incstim<200))%100ers
     figure(7)
     subplot(4,4,vid)
     bar(SPSSOut_CF(vid,[2:end]),'y')
@@ -720,7 +724,7 @@ for vid=1:13 %100ers
 end
 
 pl=1;
-for vid=14:28 %200ers
+for vid=length(find(incstim<200))+1:length(incstim) %200ers
     figure(8)
     subplot(4,4,pl)
     bar(SPSSOut_CF(vid,[2:end]),'y')
