@@ -39,7 +39,7 @@ end
 %Add last row of SetC to SetL
 
 Set=SetL;
-Set(:,7)=SetC(:,4)%PredictiveOrReactiveTrial
+Set(:,7)=SetC(:,4);%PredictiveOrReactiveTrial
 
 %Remove invalid trials and replace NaN with 0 where needed
 %Also remove participants that I want to exclude

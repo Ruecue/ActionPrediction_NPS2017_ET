@@ -109,4 +109,3 @@ SPSS.PredLook.Table         = Table_PredictiveLook_AllSubs(IncludeSubs,:);
 SPSS.PredLook.Mouth         = Mouth_PredictiveLook_AllSubs(IncludeSubs,:);
 SPSS.PredLook.Combined      = PredictiveLook_AllSubs(IncludeSubs,:);
 
-clearvars -except SPSS
