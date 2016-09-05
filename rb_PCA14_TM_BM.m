@@ -66,7 +66,7 @@ disp ('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
 %% Transfer into a format that you can analyze with SPSS
 cd(direc)
 
-clearvars -except SPSS out IncludeSubs IncludeVids datatotal timing
+clearvars -except SPSS out IncludeSubs IncludeVids datatotal timing direc
 
 %1) Looking Time
 %Load Looking Time and Create Output
@@ -82,7 +82,7 @@ SPSS.LookingTime.Mouth.Predictive             = Mouth_LookingTime_AllSubs.Predic
 SPSS.LookingTime.Combined.PercentagePredMinReact = LookingTime_AllSubs.PercentagePredMinReact(IncludeSubs,:);
 SPSS.LookingTime.Combined.Predictive             = LookingTime_AllSubs.Predictive(IncludeSubs,:);
 
-clearvars -except SPSS out IncludeSubs IncludeVids datatotal timing
+clearvars -except SPSS out IncludeSubs IncludeVids datatotal timing direc
 
 %2)Count Ratio
 %Load Count and Create Output
@@ -98,7 +98,7 @@ SPSS.CountRatio.Mouth.Count         = Mouth_PredictiveCountRatio_AllSubs.Ratio(I
 SPSS.CountRatio.Combined.Count         = PredictiveCountRatio_AllSubs.Ratio(IncludeSubs,:);
 %SPSS.CountRatio.Combined.NumPred    = PredictiveCountRatio_AllSubs.NumPred(Include,:);
 
-clearvars -except SPSS out IncludeSubs datatotal timing
+clearvars -except SPSS out IncludeSubs IncludeVids datatotal timing direc
 
 %3) Predictive Looks
 %Load Predictive Looks
@@ -111,4 +111,4 @@ SPSS.PredLook.Table         = Table_PredictiveLook_AllSubs(IncludeSubs,:);
 SPSS.PredLook.Mouth         = Mouth_PredictiveLook_AllSubs(IncludeSubs,:);
 SPSS.PredLook.Combined      = PredictiveLook_AllSubs(IncludeSubs,:);
 
-clearvars -except SPSS out IncludeSubs IncludeVids datatotal timing
+clearvars -except SPSS out IncludeSubs IncludeVids datatotal timing direc

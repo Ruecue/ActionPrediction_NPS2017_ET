@@ -7,7 +7,7 @@ function rb_PCA14_TM_BM_PerVideo(direc, out, inc, incstim)
 
 % Include=[1,2,3,6,9,10,12,15,18:31];
 % inc=Include;
-
+close all
 %%%%%%%%%%%%%%%%%%%%% LookingTime & Count Ratio
 
 %% load in the information for all participants and videos
@@ -30,7 +30,7 @@ clear LT_OutDataPerVideo C_OutDataPerVideo
 
 if ~isequal(size(SetL,1), size(SetC,1))
     error ('size SetL and SetC are not the same, please check')
-elseif ~isequal(size(find((SetC(:,1)-SetL(:,1))==0),1),size(SetC,1)) || ~isequal(size(find((SetC(:,2)-SetL(:,2))==0),1),size(SetC,1)) || ~isequal(size(find((SetC(:,3)-SetL(:,3))==0),1),size(SetC,1)) 
+elseif ~isequal(size(find((SetC(:,1)-SetL(:,1))==0),1),size(SetC,1)) || ~isequal(size(find((SetC(:,2)-SetL(:,2))==0),1),size(SetC,1)) || ~isequal(size(find((SetC(:,3)-SetL(:,3))==0),1),size(SetC,1))
     error ('values in SetC and SetL are not the same, please check')
 elseif min(ismember(find(isnan(SetC(:,4))),find(isnan(SetL(:,4)))))~=1 || min(ismember(find(isnan(SetC(:,4))),find(isnan(SetL(:,5)))))~=1
     error ('NaNs in SetC are not consistent with NaNs in SetLT, please check')
@@ -170,14 +170,14 @@ if max(~ismember(testjump,ok))>0 %this means there is a number in there that we 
     %for my data), if its not from the same video, give error
     
     if priorVid-followVid==0
-       AllAOI=[1,2,3];
-       AOIpresent=[priorAOI,followAOI]
-       AddVid=priorVid;
-       AddAOI=setdiff(AllAOI,AOIpresent);
-       Addin=[NaN,AddVid,AddAOI,NaN];
-       %add this in: (using A = [A(1:k,:); b; A(k+1:end,:)]
-       Set_Avg=[Set_Avg(1:wrongjump,:);Addin;Set_Avg(wrongjump+1:end,:)];
-     else
+        AllAOI=[1,2,3];
+        AOIpresent=[priorAOI,followAOI]
+        AddVid=priorVid;
+        AddAOI=setdiff(AllAOI,AOIpresent);
+        Addin=[NaN,AddVid,AddAOI,NaN];
+        %add this in: (using A = [A(1:k,:); b; A(k+1:end,:)]
+        Set_Avg=[Set_Avg(1:wrongjump,:);Addin;Set_Avg(wrongjump+1:end,:)];
+    else
         error('The Video-AOI combi that is missing cannot be solved by the script, please check')
     end
     warning('added in NaN ro the data for Video and AOI:')
@@ -251,46 +251,45 @@ end
 length(find(incstim<200))
 
 for vid=1:length(find(incstim<200)); %100ers
-    title ('Looking Time')
     figure(1)
     subplot(4,4,vid)
     bar(SPSSOut_LT(vid,[2:end]))
     ylim([-0.3,0.3])
     title(SPSSOut_LT(vid,1))
 end
+legend  ('Looking Time')
 
 pl=1;
 for vid=length(find(incstim<200))+1:length(incstim) %200ers
     figure(2)
-    title ('Looking Time')
     subplot(4,4,pl)
     bar(SPSSOut_LT(vid,[2:end]))
     ylim([-0.3,0.3])
     title(SPSSOut_LT(vid,1))
-     pl=pl+1;
+    pl=pl+1;
 end
+legend ('Looking Time')
 
 %Count
 for vid=1:length(find(incstim<200)); %100ers
     figure(3)
-    title ('Count')
     subplot(4,4,vid)
     bar(SPSSOut_C(vid,[2:end]),'g')
     ylim([0,1])
     title(SPSSOut_C(vid,1))
 end
+legend ('Count')
 
 pl=1;
 for vid=length(find(incstim<200))+1:length(incstim) %200ers
     figure(4)
-    title ('Count')
     subplot(4,4,pl)
     bar(SPSSOut_C(vid,[2:end]),'g')
     ylim([0,1])
     title(SPSSOut_C(vid,1))
-     pl=pl+1;
+    pl=pl+1;
 end
-
+legend  ('Count')
 
 
 
@@ -361,7 +360,7 @@ while rc<=length(SetPO)
             Set_AvgPO(j,3)=SetPO(rc,3); %AOI
             %average the two values
             Set_AvgPO(j,4)=(SetPO(rc,4)+SetPO(rc+1,4))/2; %Avg. Predictive Look Onset
-           
+            
             rc=rc+2; %skip the next row
             j=j+1;
         else
@@ -429,13 +428,13 @@ if max(~ismember(testjump,ok))>0 %this means there is a number in there that we 
     %for my data), if its not from the same video, give error
     
     if priorVid-followVid==0
-       AllAOI=[1,2,3];
-       AOIpresent=[priorAOI,followAOI];
-       AddVid=priorVid;
-       AddAOI=setdiff(AllAOI,AOIpresent);
-       Addin=[NaN,AddVid,AddAOI,NaN];
-       %add this in: (using A = [A(1:k,:); b; A(k+1:end,:)]
-       Set_AvgPO=[Set_AvgPO(1:wrongjump,:);Addin;Set_AvgPO(wrongjump+1:end,:)];
+        AllAOI=[1,2,3];
+        AOIpresent=[priorAOI,followAOI];
+        AddVid=priorVid;
+        AddAOI=setdiff(AllAOI,AOIpresent);
+        Addin=[NaN,AddVid,AddAOI,NaN];
+        %add this in: (using A = [A(1:k,:); b; A(k+1:end,:)]
+        Set_AvgPO=[Set_AvgPO(1:wrongjump,:);Addin;Set_AvgPO(wrongjump+1:end,:)];
     else
         error('PO ANALYSIS: The Video-AOI combi that is missing cannot be solved by the script, please check')
     end
@@ -496,24 +495,22 @@ end
 %Predictive Onset
 for vid=1:length(find(incstim<200)); %100ers
     figure(5)
-    title ('Onset Prediction')
     subplot(4,4,vid)
     bar(SPSSOut_PO(vid,[2:end]),'r')
     ylim([0,1000])
     title(SPSSOut_PO(vid,1))
 end
-
+legend ('Onset Prediction')
 pl=1;
 for vid=length(find(incstim<200))+1:length(incstim) %200ers
     figure(6)
-    title ('Onset Prediction')
     subplot(4,4,pl)
     bar(SPSSOut_PO(vid,[2:end]),'r')
     ylim([0,1000])
     title(SPSSOut_PO(vid,1))
-     pl=pl+1;
+    pl=pl+1;
 end
-
+legend ('Onset Prediction')
 
 
 
@@ -523,7 +520,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%%%% Closest Fixation Onset (Middle-FixOnset) 
+%%%%%%%%%%%%%%%%%%%%% Closest Fixation Onset (Middle-FixOnset)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -588,7 +585,7 @@ while rc<=length(SetCF)
             Set_AvgCF(j,3)=SetCF(rc,3); %AOI
             %average the two values
             Set_AvgCF(j,4)=(SetCF(rc,4)+SetCF(rc+1,4))/2; %Avg. Closest fixation difference
-           
+            
             rc=rc+2; %skip the next row
             j=j+1;
         else
@@ -656,13 +653,13 @@ if max(~ismember(testjump,ok))>0 %this means there is a number in there that we 
     %for my data), if its not from the same video, give error
     
     if priorVid-followVid==0
-       AllAOI=[1,2,3];
-       AOIpresent=[priorAOI,followAOI];
-       AddVid=priorVid;
-       AddAOI=setdiff(AllAOI,AOIpresent);
-       Addin=[NaN,AddVid,AddAOI,NaN];
-       %add this in: (using A = [A(1:k,:); b; A(k+1:end,:)]
-       Set_AvgCF=[Set_AvgCF(1:wrongjump,:);Addin;Set_AvgCF(wrongjump+1:end,:)];
+        AllAOI=[1,2,3];
+        AOIpresent=[priorAOI,followAOI];
+        AddVid=priorVid;
+        AddAOI=setdiff(AllAOI,AOIpresent);
+        Addin=[NaN,AddVid,AddAOI,NaN];
+        %add this in: (using A = [A(1:k,:); b; A(k+1:end,:)]
+        Set_AvgCF=[Set_AvgCF(1:wrongjump,:);Addin;Set_AvgCF(wrongjump+1:end,:)];
     else
         error('CF ANALYSIS:The Video-AOI combi that is missing cannot be solved by the script, please check')
     end
@@ -723,23 +720,23 @@ end
 %Predictive Onset
 for vid=1:length(find(incstim<200))%100ers
     figure(7)
-    title('Closest Fixation Onset')
     subplot(4,4,vid)
     bar(SPSSOut_CF(vid,[2:end]),'y')
     ylim([-1000,0])
     title(SPSSOut_CF(vid,1))
 end
+legend ('Closest Fixation Onset')
 
 pl=1;
 for vid=length(find(incstim<200))+1:length(incstim) %200ers
     figure(8)
-    title('Closest Fixation Onset')
     subplot(4,4,pl)
     bar(SPSSOut_CF(vid,[2:end]),'y')
     ylim([-1000,0])
     title(SPSSOut_CF(vid,1))
-     pl=pl+1;
+    pl=pl+1;
 end
+legend ('Closest Fixation Onset')
 
 
 
