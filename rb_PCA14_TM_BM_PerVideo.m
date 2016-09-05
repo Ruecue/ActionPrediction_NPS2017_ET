@@ -251,6 +251,7 @@ end
 length(find(incstim<200))
 
 for vid=1:length(find(incstim<200)); %100ers
+    title ('Looking Time')
     figure(1)
     subplot(4,4,vid)
     bar(SPSSOut_LT(vid,[2:end]))
@@ -261,6 +262,7 @@ end
 pl=1;
 for vid=length(find(incstim<200))+1:length(incstim) %200ers
     figure(2)
+    title ('Looking Time')
     subplot(4,4,pl)
     bar(SPSSOut_LT(vid,[2:end]))
     ylim([-0.3,0.3])
@@ -271,6 +273,7 @@ end
 %Count
 for vid=1:length(find(incstim<200)); %100ers
     figure(3)
+    title ('Count')
     subplot(4,4,vid)
     bar(SPSSOut_C(vid,[2:end]),'g')
     ylim([0,1])
@@ -280,6 +283,7 @@ end
 pl=1;
 for vid=length(find(incstim<200))+1:length(incstim) %200ers
     figure(4)
+    title ('Count')
     subplot(4,4,pl)
     bar(SPSSOut_C(vid,[2:end]),'g')
     ylim([0,1])
@@ -492,6 +496,7 @@ end
 %Predictive Onset
 for vid=1:length(find(incstim<200)); %100ers
     figure(5)
+    title ('Onset Prediction')
     subplot(4,4,vid)
     bar(SPSSOut_PO(vid,[2:end]),'r')
     ylim([0,1000])
@@ -501,6 +506,7 @@ end
 pl=1;
 for vid=length(find(incstim<200))+1:length(incstim) %200ers
     figure(6)
+    title ('Onset Prediction')
     subplot(4,4,pl)
     bar(SPSSOut_PO(vid,[2:end]),'r')
     ylim([0,1000])
@@ -717,6 +723,7 @@ end
 %Predictive Onset
 for vid=1:length(find(incstim<200))%100ers
     figure(7)
+    title('Closest Fixation Onset')
     subplot(4,4,vid)
     bar(SPSSOut_CF(vid,[2:end]),'y')
     ylim([-1000,0])
@@ -726,6 +733,7 @@ end
 pl=1;
 for vid=length(find(incstim<200))+1:length(incstim) %200ers
     figure(8)
+    title('Closest Fixation Onset')
     subplot(4,4,pl)
     bar(SPSSOut_CF(vid,[2:end]),'y')
     ylim([-1000,0])
