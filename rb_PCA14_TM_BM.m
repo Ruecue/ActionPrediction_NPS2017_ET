@@ -15,10 +15,13 @@ timing  = ImportTimingFile([direc,filesep, 'Timing_BM_v6.xlsx']);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%Note here which videos to include in the analysis
+%Note here which videos and subjects to include in the analysis
 
-%IncludeVids=[101;102;103;104;105;106;107;108;109;110;111;112;201;202;203;204;205;206;207;208;209;210;211;212;213;214;216;]; % ALL
-IncludeVids=[102;103;105;106;108;109;110;111;112;113;201;202;203;206;210;212;213;216;]; % Exclude: 101,104,107,204,205,207,208,209,211,214
+IncludeVids=[101;102;103;104;105;106;107;108;109;110;111;112;201;202;203;204;205;206;207;208;209;210;211;212;213;214;216;]; % ALL
+%IncludeVids=[102;103;105;106;108;109;110;111;112;113;201;202;203;206;210;212;213;216;]; % Exclude: 101,104,107,204,205,207,208,209,211,214
+
+%Specify which subjects to include
+IncludeSubs=[1,2,3,6,9,10,12,15,18:31];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -26,7 +29,7 @@ IncludeVids=[102;103;105;106;108;109;110;111;112;113;201;202;203;206;210;212;213
 rb_PCA14_TM_BM_LookingTimes_Percentages(direc, datatotal, timing, out,IncludeVids)
 
 %% Calculate the Count Ratio
-clearvars -except direc out IncludeVids
+clearvars -except direc out IncludeVids IncludeSubs
 close all
 clc
 cd(direc)
@@ -37,7 +40,7 @@ timing  = ImportTimingFile([direc,filesep,'Timing_BM_v6.xlsx']);
 rb_PCA14_TM_BM_CountRatio(direc, datatotal, timing, out,IncludeVids)
 
 % Calculate the first onset prediction
-clearvars -except direc out IncludeVids
+clearvars -except direc out IncludeVids IncludeSubs
 close all
 clc
 cd(direc)
@@ -49,25 +52,23 @@ rb_PCA14_TM_BM_OnsetPrediction(direc, datatotal, timing, out,IncludeVids)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ADDED IN JUNE 2016 BEGIN
 
-%% Investigating differences in Closest Fixation to Hand entering AOI\
+%% Investigating differences in Closest Fixation to Hand entering AOI
 rb_PCA14_TM_BM_ClosFix(direc, datatotal, timing, out,IncludeVids)
 
 
 %% In order to extract plots of the measures for each of the different videos, use the following script:
-    IncludeSubs=[1,2,3,6,9,10,12,15,18:31];
-    rb_PCA14_TM_BM_PerVideo(direc, out, IncludeSubs,IncludeVids)
+rb_PCA14_TM_BM_PerVideo(direc, out, IncludeSubs,IncludeVids)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ADDED IN JUNE 2016 END
 
 
 
 %% Transfer to SPSS
-clearvars -except direc out 
+clearvars -except direc out  IncludeSubs
 close all
 clc
 cd(direc)
-%Specify which subjects to include
-IncludeSubs=[1,2,3,6,9,10,12,15,18:31];
+
 
 %%%%%%%%%%%%%% Looking Time
 %Load Looking Time and Create Output
@@ -112,4 +113,4 @@ SPSS.PredLook.Table         = Table_PredictiveLook_AllSubs(IncludeSubs,:);
 SPSS.PredLook.Mouth         = Mouth_PredictiveLook_AllSubs(IncludeSubs,:);
 SPSS.PredLook.Combined      = PredictiveLook_AllSubs(IncludeSubs,:);
 
-clearvars -except SPSS 
+clearvars -except SPSS
