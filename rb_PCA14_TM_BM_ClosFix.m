@@ -17,7 +17,7 @@ for subj=1:subjtotal
     if subj<10, subjname=['Pil0',num2str(subj)];  %plak het nummer dat 'i' is op dit moment, vast aan de 'string' 'Pil0'
     else subjname=['Pil',num2str(subj)];
     end
-    clearvars -except CF_OutDataPerVideo incstim x_all subj subjname AOI subjtotal direc datatotal timing out PredictiveLook_AllSubs PredictiveLook_TrialNumber Table_PredictiveLook_AllSubs Table_PredictiveLook_TrialNumber Mouth_PredictiveLook_AllSubs Mouth_PredictiveLook_TrialNumber
+    clearvars -except CF_AllSubs CF_TrialNumber Table_CF_AllSubs  Mouth_CF_AllSubs Table_CF_TrialNumber Mouth_CF_TrialNumber CF_OutDataPerVideo incstim x_all subj subjname AOI subjtotal direc datatotal timing out PredictiveLook_AllSubs PredictiveLook_TrialNumber Table_PredictiveLook_AllSubs Table_PredictiveLook_TrialNumber Mouth_PredictiveLook_AllSubs Mouth_PredictiveLook_TrialNumber
     
     %Find data of that participant
     index=find(strcmpi(datatotal(:,2),subjname));
